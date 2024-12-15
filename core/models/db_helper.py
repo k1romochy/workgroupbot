@@ -8,7 +8,10 @@ import os
 load_dotenv()
 engine = create_async_engine(url=os.getenv('POSTGRES_URL'))
 
-async_session = async_sessionmaker(engine)
+async_session = async_sessionmaker(
+    bind=engine,
+    expire_on_commit=False
+)
 
 
 async def async_main():
