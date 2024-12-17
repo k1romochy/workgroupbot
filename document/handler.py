@@ -45,9 +45,23 @@ async def save_document(message: Message, bot=bot):
         file_path = file.file_path
         file_url = f"https://api.telegram.org/file/bot{token}/{file_path}"
         file_name = message.document.file_name
-        document_type = message.text
 
-        await document.add_document(url=file_url, tg_id=message.from_user.id, name=file_name, term=document_type)
+        document_type = ''
+        document_term = 0
+        document_register = message.text.split('_')[0] + message.text.split('_')[1] + message.text.split('_')[2]
+
+        if message.text.split('_')[3].lower() == 'ж-ба' or 'жалоба':
+            document_type = 'жалоба'
+            document_term = 3
+        elif message.text.split('_')[3].lower() == 'х-во' or 'ходатайство':
+            document_type = 'ходатайство'
+            document_term = 3
+        elif message.text.split('_')[3].lower() == 'заявление':
+            document_type = 'заявление'
+            document_term = 30
+
+        await document.add_document(url=file_url, tg_id=message.from_user.id, name=file_name,
+                                    type=document_type, term=document_term, registrated_at=document_register)
         await message.reply("Документ успешно сохранён!")
     except Exception as e:
         await message.reply(f"Ошибка: {e}")
@@ -55,8 +69,27 @@ async def save_document(message: Message, bot=bot):
 
 @router.callback_query(F.data.startswith('del_'))
 async def del_document(callback: CallbackQuery):
-    document_id = callback.data.split("del_")[1]
+    document_id = int(callback.data.split("del_")[1])
 
     await document.del_document_by_id(document_id)
     await callback.message.answer('Документ удалён')
     await callback.answer()
+
+
+@router.callback_query(F.data.startswith('addtime_'))
+async def add_time(callback: CallbackQuery):
+    document_id = int(callback.data.split('addtime_')[1])
+
+    builder = InlineKeyboardBuilder()
+    for _ in range(10):
+        builder.button(text=f'{_}', callback_data=f'addtimes_{document_id}_{_}')
+
+    builder.adjust(5)
+    keyboard = builder.as_markup()
+
+    await callback.message.answer(text='На сколько дней вы хотите продлить срок документа?', reply_markup=keyboard)
+
+
+@router.message(F.text == 'Шаблон')
+async def get_clishe_for_file(message: Message):
+    await message.reply('Шаблон файла: xx_xx_xx_ВИД-ДОКУМЕНТА_НАЗВАНИЕ')
