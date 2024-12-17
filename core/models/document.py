@@ -7,10 +7,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 
 class Document(Base):
-    created_at: Mapped[datetime] = mapped_column(
-        server_default=func.now(),
-        default=datetime.now
-    )
-    tg_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
+    term: Mapped[str] = mapped_column(unique=False, nullable=False)
+    tg_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     url: Mapped[str] = mapped_column(unique=True, nullable=False)
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
+    type: Mapped[str]= mapped_column(nullable=False)
