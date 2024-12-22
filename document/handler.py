@@ -27,7 +27,6 @@ async def get_documents(message: Message):
     for doc_url in documents_url:
         doc_name = await document.get_name_doc_by_url(doc_url)
         doc_id = await document.get_doc_id_by_url(doc_url)
-
         builder = InlineKeyboardBuilder()
         builder.button(text='Удалить', callback_data=f'del_{doc_id}')
         builder.button(text='Продлить', callback_data=f'addtime_{doc_id}')
@@ -48,15 +47,15 @@ async def save_document(message: Message, bot=bot):
 
         document_type = ''
         document_term = 0
-        document_register = message.text.split('_')[0] + message.text.split('_')[1] + message.text.split('_')[2]
+        document_register = file_name.split('_')[0] + file_name.split('_')[1] + file_name.split('_')[2]
 
-        if message.text.split('_')[3].lower() == 'ж-ба' or 'жалоба':
+        if file_name.split('_')[3].lower() == 'ж-ба' or 'жалоба':
             document_type = 'жалоба'
             document_term = 3
-        elif message.text.split('_')[3].lower() == 'х-во' or 'ходатайство':
+        elif file_name.split('_')[3].lower() == 'х-во' or 'ходатайство':
             document_type = 'ходатайство'
             document_term = 3
-        elif message.text.split('_')[3].lower() == 'заявление':
+        elif file_name.split('_')[3].lower() == 'заявление':
             document_type = 'заявление'
             document_term = 30
 
@@ -93,3 +92,9 @@ async def add_time(callback: CallbackQuery):
 @router.message(F.text == 'Шаблон')
 async def get_clishe_for_file(message: Message):
     await message.reply('Шаблон файла: xx_xx_xx_ВИД-ДОКУМЕНТА_НАЗВАНИЕ')
+
+
+@router.message(Command('deletealldoc'))
+async def delete_all_docs(message: Message):
+    await document.delete_all_docs()
+    await message.answer('Вы успешно удалили все документы')

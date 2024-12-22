@@ -12,14 +12,14 @@ async def get_documents_url():
 
 async def get_name_doc_by_url(url: str):
     async with db.async_session() as session:
-        document_name = await session.scalar(select(Document).where(Document.url == url).order_by(Document.name))
+        document_name = await session.scalar(select(Document.name).where(Document.url == url))
 
         return document_name
 
 
 async def get_doc_id_by_url(url: str):
     async with db.async_session() as session:
-        document_id = await session.scalar(select(Document).where(Document.url == url).order_by(Document.id))
+        document_id = await session.scalar(select(Document.id).where(Document.url == url))
 
         return document_id
 
@@ -35,7 +35,7 @@ async def del_document_by_id(id: int):
     async with db.async_session() as session:
         document = await session.scalar(select(Document).where(Document.id == id))
 
-        session.delete(document)
+        await session.delete(document)
         await session.commit()
 
 
@@ -48,3 +48,15 @@ async def update_document_duration_by_id(id: int, plus_term: int):
             document.term = new_term
 
             await session.commit()
+
+
+async def delete_all_docs():
+    async with db.async_session() as session:
+        documents_url = await session.scalars(select(Document.url))
+
+        for url in documents_url:
+            document = await session.scalar(select(Document).where(Document.url == url))
+
+            await session.delete(document)
+
+        await session.commit()
