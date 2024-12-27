@@ -10,7 +10,7 @@ services:
         sleep 5;
       done;
       alembic upgrade head &&
-      python -m bot
+      python -m run.main
       "
     env_file:
       - ./.env
@@ -23,14 +23,14 @@ services:
 
   postgres:
     image: postgres:latest
-    container_name: postgres_container_wdb
+    container_name: postgres_container_wdbz
     restart: always
     ports:
       - "5401:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "Egor100209"
-      POSTGRES_DB: workgroupdb
+      POSTGRES_DB: maindb
     networks:
       - network
     volumes:
@@ -46,7 +46,7 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: "example@gmail.com"
       PGADMIN_DEFAULT_PASSWORD: "123456"
-    container_name: pgadmin_container_wdb
+    container_name: pgadmin_container_wdbz
     volumes:
       - pgadmin_volume:/var/lib/pgadmin/
 
