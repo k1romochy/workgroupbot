@@ -3,7 +3,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command, CommandStart
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from sqlalchemy.ext.asyncio import AsyncSession
-from markups.main import main
+from markups.kb import main
 import user.crud as user
 
 router = Router()

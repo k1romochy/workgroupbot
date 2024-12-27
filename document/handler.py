@@ -10,9 +10,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.models.document import Document
 import document.crud as document
 
-import markups.main as kb
+import markups.kb as kb
 
-from app.context import bot
+from run.context import bot
 
 router = Router()
 
@@ -47,7 +47,7 @@ async def save_document(message: Message, bot=bot):
 
         document_type = ''
         document_term = 0
-        document_register = file_name.split('_')[0] + file_name.split('_')[1] + file_name.split('_')[2]
+        document_register = file_name.split('_')[0] + '_' + file_name.split('_')[1] + '_' + file_name.split('_')[2]
 
         if file_name.split('_')[3].lower() == 'ж-ба' or 'жалоба':
             document_type = 'жалоба'
@@ -80,13 +80,20 @@ async def add_time(callback: CallbackQuery):
     document_id = int(callback.data.split('addtime_')[1])
 
     builder = InlineKeyboardBuilder()
-    for _ in range(10):
+    for _ in range(1, 10):
         builder.button(text=f'{_}', callback_data=f'addtimes_{document_id}_{_}')
 
     builder.adjust(5)
     keyboard = builder.as_markup()
 
     await callback.message.answer(text='На сколько дней вы хотите продлить срок документа?', reply_markup=keyboard)
+    await callback.answer()
+
+
+@router.message(Command('update'))
+async def update_documents(message: Message):
+    await document.update_documents()
+    await message.answer('Вы обновили все документы')
 
 
 @router.message(F.text == 'Шаблон')

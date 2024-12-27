@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy import select
 from core.models.document import Document
 import core.models.db_helper as db
@@ -60,3 +61,24 @@ async def delete_all_docs():
             await session.delete(document)
 
         await session.commit()
+
+
+async def update_documents():
+    async with db.async_session() as session:
+        documents = await session.scalars(select(Document))
+
+        for document in documents:
+            registrated_at_str = document.registrated_at
+            registrated_at = datetime.strptime(registrated_at_str, "%Y_%m_%d")
+
+            current_time = datetime.now()
+
+            time_difference = current_time - registrated_at
+            days_passed = time_difference.days
+
+            if int(days_passed) > document.term:
+                await session.delete(document)
+
+        await session.commit()
+
+

@@ -1,7 +1,5 @@
 from aiogram import Dispatcher
-from dotenv import load_dotenv
-from app.context import bot
-import os
+from run.context import bot
 import asyncio
 
 from user.handler import router as user_router

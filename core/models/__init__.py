@@ -1,6 +1,6 @@
 __all__ = (
     'User',
-   'Document',
+    'Document',
 )
 
 from core.models.user import User

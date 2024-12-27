@@ -1,0 +1,59 @@
+version: '3.7'
+
+services:
+  bot:
+    build: .
+    command: >
+      sh -c "
+      until pg_isready -h postgres -p 5432 -q; do
+        echo 'Waiting for PostgreSQL...';
+        sleep 5;
+      done;
+      alembic upgrade head &&
+      python -m bot
+      "
+    env_file:
+      - ./.env
+    restart: always
+    depends_on:
+      - postgres
+      - pgadmin
+    networks:
+      - network
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container_wdb
+    restart: always
+    ports:
+      - "5401:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "Egor100209"
+      POSTGRES_DB: workgroupdb
+    networks:
+      - network
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - "5500:80"
+    networks:
+      - network
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "example@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "123456"
+    container_name: pgadmin_container_wdb
+    volumes:
+      - pgadmin_volume:/var/lib/pgadmin/
+
+networks:
+  network:
+    driver: bridge
+
+volumes:
+  postgres_volume:
+  pgadmin_volume:
