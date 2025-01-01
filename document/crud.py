@@ -1,5 +1,7 @@
 from datetime import datetime
 from sqlalchemy import select
+
+from core.models import User
 from core.models.document import Document
 import core.models.db_helper as db
 from typing import List, Tuple
@@ -114,7 +116,6 @@ async def get_prosroki() -> List[Tuple[int, int]]:
                 continue
 
         return list_prosroki
-
 
 
 async def get_url_by_id(doc_id: int):

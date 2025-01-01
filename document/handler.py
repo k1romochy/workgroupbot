@@ -167,7 +167,6 @@ async def get_prosrok_doc(message: Message):
         await message.answer(f'Что-то пошло не так: {e}')
 
 
-
 @router.message(F.text == 'Команды')
 async def get_all_commands(message: Message):
     await message.answer('Вот все доступные команды', reply_markup=commands)
