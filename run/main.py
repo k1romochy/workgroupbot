@@ -16,7 +16,7 @@ async def periodic_google_sheets_update():
             print("Данные успешно экспортированы в Google Таблицу")
         except Exception as e:
             print(f"Ошибка при экспорте: {e}")
-        await asyncio.sleep(5) #перерыв
+        await asyncio.sleep(7200) #перерыв
 
 
 async def main():
