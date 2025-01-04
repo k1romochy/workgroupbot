@@ -1,6 +1,7 @@
 import os
 
 from aiogram import F, Router
+from aiogram.enums import ContentType
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -170,3 +171,4 @@ async def get_prosrok_doc(message: Message):
 @router.message(F.text == 'Команды')
 async def get_all_commands(message: Message):
     await message.answer('Вот все доступные команды', reply_markup=commands)
+    
