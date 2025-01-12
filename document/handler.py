@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 from aiogram import F, Router
@@ -22,6 +23,8 @@ router = Router()
 
 load_dotenv()
 token = os.getenv('TOKEN')
+user_ids = [968064762]
+aid = 5470849504
 
 
 @router.message(F.text == 'Все документы')
@@ -90,11 +93,14 @@ async def save_document(message: Message, bot=bot):
 
 @router.callback_query(F.data.startswith('del_'))
 async def del_document(callback: CallbackQuery):
-    document_id = int(callback.data.split("del_")[1])
+    if callback.from_user.id in user_ids:
+        document_id = int(callback.data.split("del_")[1])
 
-    await document.del_document_by_id(document_id)
-    await callback.message.answer('Документ удалён')
-    await callback.answer()
+        await document.del_document_by_id(document_id)
+        await callback.message.answer('Документ удалён')
+        await callback.answer()
+    else:
+        await callback.answer(text='У вас нет таких прав')
 
 
 @router.callback_query(F.data.startswith('addtime_'))
@@ -114,8 +120,11 @@ async def add_time(callback: CallbackQuery):
 
 @router.message(F.text == 'Обновить документы')
 async def update_documents(message: Message):
-    await document.update_documents()
-    await message.answer('Вы удалили все просроченные документы')
+    if message.from_user.id in user_ids:
+        await document.update_documents()
+        await message.answer('Вы удалили все просроченные документы')
+    else:
+        await message.answer('У вас нет таких прав')
 
 
 @router.message(F.text == 'Шаблон')
@@ -125,8 +134,11 @@ async def get_clishe_for_file(message: Message):
 
 @router.message(Command('Удалить все документы'))
 async def delete_all_docs(message: Message):
-    await document.delete_all_docs()
-    await message.answer('Вы успешно удалили все документы')
+    if message.from_user.id in user_ids:
+        await document.delete_all_docs()
+        await message.answer('Вы успешно удалили все документы')
+    else:
+        await message.answer('У вас нет таких прав')
 
 
 @router.callback_query(F.data.startswith('addtimes_'))
@@ -171,4 +183,24 @@ async def get_prosrok_doc(message: Message):
 @router.message(F.text == 'Команды')
 async def get_all_commands(message: Message):
     await message.answer('Вот все доступные команды', reply_markup=commands)
-    
+
+
+async def send_mess_of_inspired(user_id=user_ids):
+    list_of_documents = await document.get_prosroki()
+    for usid in user_id:
+        await bot.send_message(chat_id=usid, text='Вот все просроченные документы:')
+        for doc_id, diff in list_of_documents:
+            doc_name = await document.get_name_by_id(doc_id)
+            doc_url = await document.get_url_by_id(doc_id)
+
+            builder = InlineKeyboardBuilder()
+            builder.button(text='Удалить', callback_data=f'del_{doc_id}')
+            builder.button(text='Продлить', callback_data=f'addtime_{doc_id}')
+            builder.button(text='Скачать файл', url=f'{doc_url}')
+
+            builder.adjust(2)
+            keyboard = builder.as_markup()
+
+            text = f"{doc_name}\nПросрочено на {diff} дней."
+
+            await bot.send_message(chat_id=usid, text=text, reply_markup=keyboard)

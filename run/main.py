@@ -6,6 +6,13 @@ from user.handler import router as user_router
 from document.handler import router as document_router
 from core.models.db_helper import async_main
 from core.google_sheets import export_to_google_sheets
+from document.handler import send_mess_of_inspired
+
+
+async def mess_inspired():
+    while True:
+        await send_mess_of_inspired()
+        await asyncio.sleep(86400) #перерыв
 
 
 async def periodic_google_sheets_update():
@@ -27,6 +34,7 @@ async def main():
     await async_main()
     await export_to_google_sheets()
 
+    asyncio.create_task(mess_inspired())
     asyncio.create_task(periodic_google_sheets_update())
 
     await dp.start_polling(bot)
