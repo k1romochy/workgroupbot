@@ -23,7 +23,7 @@ services:
 
   postgres:
     image: postgres:latest
-    container_name: postgres_container_wdbz
+    container_name: postgres_container_wdbzz
     restart: always
     ports:
       - "5401:5432"
@@ -46,7 +46,7 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: "example@gmail.com"
       PGADMIN_DEFAULT_PASSWORD: "123456"
-    container_name: pgadmin_container_wdbz
+    container_name: pgadmin_container_wdbzz
     volumes:
       - pgadmin_volume:/var/lib/pgadmin/
 
