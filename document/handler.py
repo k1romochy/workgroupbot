@@ -23,7 +23,7 @@ router = Router()
 
 load_dotenv()
 token = os.getenv('TOKEN')
-user_ids = [968064762]
+user_ids = [968064762, 5470849504]
 aid = 5470849504
 
 
@@ -132,7 +132,7 @@ async def get_clishe_for_file(message: Message):
     await message.reply('Шаблон файла: xx_xx_xx_ВИД-ДОКУМЕНТА_НАЗВАНИЕ')
 
 
-@router.message(Command('Удалить все документы'))
+@router.message(F.text == 'Удалить все документы')
 async def delete_all_docs(message: Message):
     if message.from_user.id in user_ids:
         await document.delete_all_docs()
