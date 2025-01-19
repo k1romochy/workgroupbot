@@ -56,7 +56,7 @@ async def get_documents(message: Message):
 
 
 @router.message(F.document)
-async def save_document(message: Message, bot=bot):
+async def save_document(message: Message):
     try:
         file = await bot.get_file(message.document.file_id)
         file_path = file.file_path
@@ -82,7 +82,6 @@ async def save_document(message: Message, bot=bot):
 
             await document.add_document(url=file_url, tg_id=message.from_user.id, name=file_name,
                                         type=document_type, term=document_term, registrated_at=document_register)
-            await message.reply("Документ успешно сохранён!")
         else:
             await message.answer('Документ не был сохранён, так как дата написана некорректно.')
     except IntegrityError:

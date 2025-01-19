@@ -12,7 +12,7 @@ from document.handler import send_mess_of_inspired
 async def mess_inspired():
     while True:
         await send_mess_of_inspired()
-        await asyncio.sleep(86400) #перерыв
+        await asyncio.sleep(86400)
 
 
 async def periodic_google_sheets_update():

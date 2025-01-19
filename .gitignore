@@ -1,1 +1,3 @@
-credentials.json
+core/credentials.json
+alembic.ini
+migrations
