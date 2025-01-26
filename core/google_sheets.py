@@ -14,7 +14,7 @@ DATABASE_URL = os.getenv('POSTGRES_URL')
 
 async def fetch_data_from_db():
     async with async_session() as session:
-        query = text("SELECT id, name, type, term, url, registrated_at FROM public.document;")
+        query = text("SELECT id, name, type, url, registrated_at FROM public.document;")
         result = await session.execute(query)
         rows = result.fetchall()
         return [tuple(row) for row in rows]
